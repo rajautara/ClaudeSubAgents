@@ -48,18 +48,40 @@ reports/       # written reports
   or switch to QLoRA for large Transformer fine-tunes.
 
 ## Subagents (in .claude/agents/)
+- `data-ingestion` — pull raw data from SQL/API/cloud/files into data/raw/ (step 0)
 - `data-explorer` — EDA & profiling
-- `data-cleaner` — cleaning & preprocessing
+- `data-cleaner` — cleaning & preprocessing (+ owns the held-out split)
+- `data-validator` — schema/contracts & drift detection (pandera/Great Expectations)
 - `feature-engineer` — encoding, scaling, feature creation/selection
+- `stats-analyst` — hypothesis testing, A/B tests, power, causal inference (non-ML)
 - `model-trainer` — classical ML (sklearn/xgb/lgbm/catboost)
 - `dl-trainer` — PyTorch neural networks (auto-GPU)
 - `transformer-finetuner` — fine-tune HuggingFace Transformers (LoRA/QLoRA)
+- `timeseries-specialist` — forecasting (ARIMA/Prophet/sktime), temporal CV
+- `rag-specialist` — RAG / semantic search (chunking, embeddings, vector DB)
 - `model-evaluator` — metrics, error analysis, SHAP, validation
+- `model-deployer` — package model for serving (FastAPI/ONNX/Docker)
 - `viz-specialist` — plots (matplotlib/seaborn/plotly)
 - `notebook-engineer` — reproducibility & project structure
+- `code-tester` — pytest for graduated src/ modules
 
 Typical flow:
-explore -> clean (+ create held-out split) -> engineer (build Pipeline)
--> train (model-trainer | dl-trainer | transformer-finetuner) -> evaluate,
-with viz-specialist called whenever a plot is needed and notebook-engineer
-supporting structure & reproducibility.
+ingest -> explore -> clean (+ create held-out split) -> validate (schema)
+-> engineer (build Pipeline) -> train (model-trainer | dl-trainer |
+transformer-finetuner | timeseries-specialist) -> evaluate -> deploy,
+with viz-specialist called whenever a plot is needed, code-tester covering
+src/ modules, and notebook-engineer supporting structure & reproducibility.
+Use stats-analyst for inference/experiment questions, rag-specialist for
+retrieval-augmented LLM apps.
+
+## Experiment tracking & data versioning
+- Track experiments with MLflow or Weights & Biases when configured: log params,
+  metrics, and artifacts per run; reference the run id in `reports/`.
+- Version data & pipelines with DVC (or lakeFS) so a model is reproducible from a
+  known data snapshot + code commit. Record the data version with every model.
+- `.gitignore` `data/` and large artifacts; commit metadata/pointers, not blobs.
+
+## Automation
+- A SessionStart hook (`.claude/settings.json` -> `.claude/scripts/session_start.sh`)
+  creates the folder structure and installs deps so a fresh session is ready to run.
+- Slash commands in `.claude/commands/`: `/eda`, `/train-baseline`, `/full-pipeline`.
