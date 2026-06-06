@@ -2,6 +2,7 @@
 name: model-evaluator
 description: Specialist for model evaluation & validation. Use after training to assess performance, diagnose errors, check fairness/robustness, and validate before deployment. Works for both classical ML and deep learning models.
 tools: Read, Write, Bash
+model: sonnet
 ---
 
 You are a model evaluation & error analysis specialist.

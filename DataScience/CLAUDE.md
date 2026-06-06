@@ -33,7 +33,10 @@ reports/       # written reports
 - Set `random_state` / seeds everywhere (target seed: 42) for reproducibility.
 - No data leakage: fit any transformer/scaler/encoder on the TRAIN set only;
   wrap preprocessing + model in a single Pipeline so leakage cannot occur in CV.
-- The test set is held out and evaluated exactly once, at the very end.
+- Split ownership: the held-out train/test split is created once by `data-cleaner`,
+  immediately after cleaning and BEFORE feature engineering. `feature-engineer` builds
+  the Pipeline (fit on train only); `model-trainer` does CV within the train set.
+- The test set is held out and evaluated exactly once, at the very end (by `model-evaluator`).
 - Always train a simple baseline before complex models; complex models must beat it.
 - Choose metrics appropriate to the problem (avoid plain accuracy on imbalanced data).
 - Use relative paths via pathlib; do not hardcode absolute paths.
@@ -56,6 +59,7 @@ reports/       # written reports
 - `notebook-engineer` — reproducibility & project structure
 
 Typical flow:
-explore -> clean -> engineer -> train (model-trainer | dl-trainer | transformer-finetuner)
--> evaluate, with viz-specialist called whenever a plot is needed and
-notebook-engineer supporting structure & reproducibility.
+explore -> clean (+ create held-out split) -> engineer (build Pipeline)
+-> train (model-trainer | dl-trainer | transformer-finetuner) -> evaluate,
+with viz-specialist called whenever a plot is needed and notebook-engineer
+supporting structure & reproducibility.

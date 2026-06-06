@@ -18,7 +18,7 @@ Then in Claude Code, run `/agents` to confirm they all loaded.
 | Subagent | When to use | Focus |
 |---|---|---|
 | `data-explorer` | New dataset | EDA, profiling, missing values, correlation |
-| `data-cleaner` | After EDA | Impute, dedup, fix dtypes, standardize |
+| `data-cleaner` | After EDA | Impute, dedup, fix dtypes, standardize, **create held-out split** |
 | `feature-engineer` | Data is clean | Encoding, scaling, feature creation/selection |
 | `model-trainer` | Features ready | Classical ML: baseline + tune (sklearn/xgb/lgbm/catboost) |
 | `dl-trainer` | Deep learning task | PyTorch NN (MLP/CNN/RNN/Transformer), auto-GPU |
@@ -31,12 +31,17 @@ Then in Claude Code, run `/agents` to confirm they all loaded.
 
 ```
 data-explorer -> data-cleaner -> feature-engineer -> [ model-trainer
-                                                      | dl-trainer
+              (+ held-out split)   (build Pipeline)   | dl-trainer
                                                       | transformer-finetuner ] -> model-evaluator
                                        ^                                                  |
                               viz-specialist (called whenever a plot is needed)
 notebook-engineer (support: project structure & reproducibility)
 ```
+
+The held-out test split is created once by `data-cleaner` (before feature
+engineering) and evaluated exactly once at the end by `model-evaluator`.
+`feature-engineer` builds a Pipeline fit on the train set only, so no leakage
+occurs during cross-validation.
 
 ## How to use
 
@@ -58,5 +63,6 @@ notebook-engineer (support: project structure & reproducibility)
 - Each subagent has its own separate context window — it does not pollute the main conversation. Great for long pipelines.
 - `CLAUDE.md` holds global, project-wide context (stack, structure, conventions). Subagent `.md` files hold task-specific behavior. They complement each other.
 - Edit any `.md` to tweak behavior — change the `tools` field to limit access (e.g. remove `Bash` from a subagent that should not run code).
+- Each subagent pins a `model` in its frontmatter: heavier reasoning agents use `sonnet`, lighter mechanical ones (`viz-specialist`, `notebook-engineer`) use `haiku` to save cost. Change to `opus` or `inherit` as you prefer.
 - Add more subagents as your stack needs (e.g. `timeseries-specialist`, `rag-specialist`).
 - After editing agent files mid-session, run `/agents` again (or start a fresh session) to reload.
