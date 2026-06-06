@@ -21,7 +21,9 @@ Then run `/agents` in Claude Code to confirm they loaded.
 | `solution-architect` | Project start / major feature | Solution structure, project types, layering |
 | `backend-engineer` | Core logic & APIs | Domain, application services, ASP.NET Core |
 | `data-engineer` | Persistence | EF Core, Dapper, migrations, repositories |
-| `desktop-ui-engineer` | Desktop GUI | WPF (MVVM) / WinForms, binding, view-models |
+| `security-engineer` | Auth & hardening | Identity/JWT/OIDC, policies, secrets, OWASP |
+| `desktop-ui-engineer` | Classic desktop GUI | WPF (MVVM) / WinForms, binding, view-models |
+| `winui-maui-engineer` | Modern / cross-platform UI | WinUI 3 (Windows App SDK), .NET MAUI, MSIX |
 | `windows-service-engineer` | Background processes | Worker Service / Windows Service, schedulers |
 | `console-cli-engineer` | CLI tools | Args, subcommands, exit codes, console UX |
 | `interop-engineer` | Native / COM interop | P/Invoke, COM (Office automation), marshaling |
@@ -37,9 +39,10 @@ Then run `/agents` in Claude Code to confirm they loaded.
 solution-architect
       |
       v
-backend-engineer ── data-engineer
-      |                  |
-      +── desktop-ui-engineer | windows-service-engineer | console-cli-engineer
+backend-engineer ── data-engineer ── security-engineer
+      |
+      +── desktop-ui-engineer | winui-maui-engineer | blazor-engineer
+      |    windows-service-engineer | console-cli-engineer | interop-engineer
       |
       v
 test-engineer  +  integration-test-engineer
@@ -68,15 +71,28 @@ build-deploy-engineer
 
 - **Console / CLI tool** -> `console-cli-engineer` (+ backend/data as needed)
 - **WPF / WinForms desktop** -> `desktop-ui-engineer` (+ backend/data)
+- **WinUI 3 / .NET MAUI (modern or cross-platform)** -> `winui-maui-engineer` (+ backend/data)
 - **Windows Service / background worker** -> `windows-service-engineer`
 - **Web API** -> `backend-engineer` (+ data-engineer)
 - **Blazor web UI** -> `blazor-engineer` (+ backend/data)
+- **Sign-in / access control / secrets** -> `security-engineer`
 - **Office automation / native Win32 calls** -> `interop-engineer`
 - **Any of the above** -> always finish with tests, review, then build/deploy.
+
+## Slash commands
+
+`.claude/commands/` adds shortcuts for common chains:
+> `/scaffold-solution OrdersApp api` — new layered solution via `solution-architect`
+> `/add-feature "export orders to CSV"` — implement end to end across the suite
+> `/test-all` — run the suite and triage failures
+
+A SessionStart hook (`.claude/settings.json` + `.claude/scripts/session_start.sh`)
+restores and builds the solution on session start so it's ready to work on.
 
 ## Notes
 
 - Each subagent has its own context window — it won't pollute the main conversation. Ideal for long, multi-layer builds.
 - `CLAUDE.md` holds project-wide rules (stack, architecture, conventions); subagent `.md` files hold task-specific behavior. They complement each other.
-- Edit any `.md` to adjust behavior; change the `tools` field to restrict access (e.g. `code-reviewer` has no `Write` — review only).
+- Edit any `.md` to adjust behavior; change the `tools` field to restrict access (e.g. `code-reviewer` has no `Write`/`Edit` — review only).
+- Each subagent pins `model: sonnet` in its frontmatter. Bump the design-heavy ones (`solution-architect`, `code-reviewer`, `security-engineer`) to `opus` for deeper reasoning, or set `inherit`, as you prefer.
 - After editing agent files mid-session, run `/agents` again (or start a fresh session) to reload.

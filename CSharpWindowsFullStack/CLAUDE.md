@@ -57,7 +57,9 @@ global.json
 - `solution-architect` — solution/project structure & layering
 - `backend-engineer` — domain, application services, Web API
 - `data-engineer` — EF Core / Dapper persistence, migrations
+- `security-engineer` — authn/authz (Identity/JWT/OIDC), secrets, hardening
 - `desktop-ui-engineer` — WPF (MVVM) / WinForms
+- `winui-maui-engineer` — WinUI 3 (Windows App SDK) / .NET MAUI
 - `windows-service-engineer` — Worker / Windows Service background apps
 - `console-cli-engineer` — console & CLI tools
 - `interop-engineer` — P/Invoke, COM automation, native interop
@@ -68,5 +70,18 @@ global.json
 - `code-reviewer` — quality, security, design review
 
 Typical flow:
-solution-architect -> (backend / data / desktop-ui / windows-service / console-cli / blazor / interop)
+solution-architect -> (backend / data / security / desktop-ui / winui-maui /
+windows-service / console-cli / blazor / interop)
 -> test-engineer + integration-test-engineer -> code-reviewer -> build-deploy-engineer.
+
+## Security ownership
+- Authentication, authorization, and secret/data protection are owned by
+  `security-engineer`. Other agents define auth abstractions in the Application
+  layer and delegate the implementation. Enforce authorization on the server/API;
+  never trust client-side checks. No secrets in source — `dotnet user-secrets`
+  (dev), environment/vault (prod).
+
+## Automation
+- A SessionStart hook (`.claude/settings.json` -> `.claude/scripts/session_start.sh`)
+  restores and builds the solution so a fresh session is ready to work on.
+- Slash commands in `.claude/commands/`: `/scaffold-solution`, `/add-feature`, `/test-all`.
