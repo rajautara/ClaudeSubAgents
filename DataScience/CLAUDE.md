@@ -61,9 +61,12 @@ reports/       # written reports
 - `rag-specialist` — RAG / semantic search (chunking, embeddings, vector DB)
 - `model-evaluator` — metrics, error analysis, SHAP, validation
 - `model-deployer` — package model for serving (FastAPI/ONNX/Docker)
+- `recommender-specialist` — recommender systems (CF, content-based, matrix factorization)
+- `anomaly-detector` — outlier/novelty detection (IsolationForest/LOF/OC-SVM/autoencoder)
 - `viz-specialist` — plots (matplotlib/seaborn/plotly)
 - `notebook-engineer` — reproducibility & project structure
 - `code-tester` — pytest for graduated src/ modules
+- `mlops-orchestrator` — reproducible pipelines, tracking, registry, CI (DVC/MLflow)
 
 Typical flow:
 ingest -> explore -> clean (+ create held-out split) -> validate (schema)

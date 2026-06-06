@@ -31,11 +31,14 @@ Then in Claude Code, run `/agents` to confirm they all loaded.
 | `transformer-finetuner` | Fine-tune an LLM/NLP model | HuggingFace transformers, LoRA/QLoRA, auto-GPU |
 | `timeseries-specialist` | Temporal / forecasting data | ARIMA/Prophet/sktime, temporal CV, lag features |
 | `rag-specialist` | RAG / semantic search | Chunking, embeddings, vector DB, retrieval eval |
+| `recommender-specialist` | Personalization / ranking | CF, content-based, matrix factorization, ranking metrics |
+| `anomaly-detector` | Rare-event / fraud / faults | IsolationForest/LOF/OC-SVM/autoencoder, scarce labels |
 | `model-evaluator` | After training | Metrics, error analysis, SHAP, validation |
 | `model-deployer` | Ship an evaluated model | FastAPI/ONNX/Docker, batch & online inference |
 | `viz-specialist` | Whenever a plot is needed | Visualization (matplotlib/seaborn/plotly) |
 | `notebook-engineer` | Refactor/setup | Reproducibility, project structure, notebook hygiene |
 | `code-tester` | After logic moves to `src/` | pytest unit tests, fixtures, determinism, edge cases |
+| `mlops-orchestrator` | Automate & version the pipeline | DVC/Makefile, MLflow/W&B, model registry, CI |
 
 ## Typical workflow
 
@@ -84,5 +87,5 @@ occurs during cross-validation.
 - `CLAUDE.md` holds global, project-wide context (stack, structure, conventions). Subagent `.md` files hold task-specific behavior. They complement each other.
 - Edit any `.md` to tweak behavior — change the `tools` field to limit access (e.g. remove `Bash` from a subagent that should not run code).
 - Each subagent pins a `model` in its frontmatter: heavier reasoning agents use `sonnet`, lighter mechanical ones (`viz-specialist`, `notebook-engineer`) use `haiku` to save cost. Change to `opus` or `inherit` as you prefer.
-- Add more subagents as your stack needs (e.g. `recommender-specialist`, `anomaly-detector`, `mlops-orchestrator`).
+- Add more subagents as your stack needs (e.g. `geospatial-specialist`, `causal-inference-specialist`, `llm-eval-specialist`).
 - After editing agent files mid-session, run `/agents` again (or start a fresh session) to reload.
