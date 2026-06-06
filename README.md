@@ -10,21 +10,25 @@ delegate work to the right specialist.
 
 | Suite | Stack | What it covers |
 |---|---|---|
-| [CSharpWindowsFullStack](CSharpWindowsFullStack/) | C# / .NET 8 on Windows | Full-stack builds: console/CLI, WPF & WinForms desktop, Worker/Windows Service, ASP.NET Core API, Blazor — plus data, interop, testing, review, build/deploy |
-| [DataScience](DataScience/) | Python 3.11+ | End-to-end data science: EDA, cleaning, feature engineering, classical ML, deep learning (PyTorch), Transformer fine-tuning, evaluation, visualization |
+| [CSharpWindowsFullStack](CSharpWindowsFullStack/) | C# / .NET 8 on Windows | Full-stack builds: console/CLI, WPF & WinForms, WinUI 3/MAUI, Worker/Windows Service, ASP.NET Core API, Blazor — plus data, security/auth, interop, testing, review, build/deploy |
+| [DataScience](DataScience/) | Python 3.11+ | End-to-end data science: ingestion, EDA, cleaning/validation, feature engineering, classical ML, deep learning (PyTorch), Transformer fine-tuning, time-series, RAG, evaluation, deployment & MLOps |
 
-### CSharpWindowsFullStack agents
+### CSharpWindowsFullStack agents (14)
 
 `solution-architect` · `backend-engineer` · `data-engineer` ·
-`desktop-ui-engineer` · `windows-service-engineer` · `console-cli-engineer` ·
-`interop-engineer` · `blazor-engineer` · `test-engineer` ·
-`integration-test-engineer` · `build-deploy-engineer` · `code-reviewer`
+`security-engineer` · `desktop-ui-engineer` · `winui-maui-engineer` ·
+`windows-service-engineer` · `console-cli-engineer` · `interop-engineer` ·
+`blazor-engineer` · `test-engineer` · `integration-test-engineer` ·
+`build-deploy-engineer` · `code-reviewer`
 
-### DataScience agents
+### DataScience agents (19)
 
-`data-explorer` · `data-cleaner` · `feature-engineer` · `model-trainer` ·
-`dl-trainer` · `transformer-finetuner` · `model-evaluator` · `viz-specialist` ·
-`notebook-engineer`
+`data-ingestion` · `data-explorer` · `data-cleaner` · `data-validator` ·
+`feature-engineer` · `stats-analyst` · `model-trainer` · `dl-trainer` ·
+`transformer-finetuner` · `timeseries-specialist` · `rag-specialist` ·
+`model-evaluator` · `model-deployer` · `viz-specialist` · `notebook-engineer` ·
+`code-tester` · `recommender-specialist` · `anomaly-detector` ·
+`mlops-orchestrator`
 
 See each suite's README for the full role table, typical workflow, and usage
 examples.
