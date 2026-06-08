@@ -49,8 +49,10 @@ reports/       # written reports
   or switch to QLoRA for large Transformer fine-tunes.
 
 ## Custom agents (in .github/agents/)
-Select the right agent from the Copilot Chat agent picker for each task. Unlike
-Claude Code, Copilot does not auto-delegate — you pick the agent yourself.
+Pick the right agent from the Copilot Chat agent picker for each task — OR select
+the single `ds-orchestrator` agent, which auto-delegates each stage to the
+specialists below (via the `agent`/`runSubagent` tool), the same way Claude Code
+routes work automatically.
 - `data-ingestion` — pull raw data from SQL/API/cloud/files into data/raw/ (step 0)
 - `data-explorer` — EDA & profiling
 - `data-cleaner` — cleaning & preprocessing (+ owns the held-out split)

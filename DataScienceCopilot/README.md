@@ -29,6 +29,7 @@ should be listed.
 
 | Agent | When to use | Focus |
 |---|---|---|
+| `ds-orchestrator` | Want one agent to drive everything | **Coordinator** — auto-delegates each stage to the specialists below |
 | `data-ingestion` | Need to pull source data | Step 0: SQL/API/cloud/files -> immutable `data/raw/` |
 | `data-explorer` | New dataset | EDA, profiling, missing values, correlation |
 | `data-cleaner` | After EDA | Impute, dedup, fix dtypes, standardize, **create held-out split** |
@@ -89,14 +90,37 @@ Each prompt asks for its inputs (dataset path, target column, …) inline.
 > Select **dl-trainer** and ask: "Build a CNN for this image dataset."
 > Select **transformer-finetuner** and ask: "LoRA fine-tune a BERT model for text classification."
 
+## Auto-delegation: the `ds-orchestrator` agent
+
+Don't want to pick a specialist by hand for every step? Select the single
+**`ds-orchestrator`** agent and describe your goal — it plans the task and
+**automatically delegates each stage to the right specialist** (the same
+auto-routing you get from Claude Code), then reports back:
+
+> Select **ds-orchestrator** and ask:
+> "Run the full pipeline on data/raw/sales.csv to predict churn."
+
+It will, on its own, call `data-explorer` → `data-cleaner` → `feature-engineer`
+→ `model-trainer` → `model-evaluator` (and `viz-specialist` whenever a plot is
+needed), passing artifacts forward between them.
+
+**Requirements (VS Code, GitHub Copilot multi-agent — shipped June 2026):**
+- The orchestrator uses the **`agent` / `runSubagent`** tool (already set in its
+  frontmatter) to spin up specialists; make sure subagents are enabled in your
+  Copilot settings.
+- Its `agents:` frontmatter lists exactly the 19 specialists it may delegate to,
+  so it won't wander off to a generic coding agent.
+- On older Copilot builds without subagent support, fall back to picking agents
+  manually (below) or use the `/full-pipeline` prompt.
+
 ## Differences vs the Claude Code version
 
 This port is faithful to the role prompts, but Copilot and Claude Code differ in
 a few mechanics — worth knowing:
 
-- **No automatic delegation.** Claude Code picks the right subagent from its
-  `description`; in Copilot **you select the agent yourself** from the picker. The
-  `/full-pipeline` prompt therefore tells you which agent to switch to at each stage.
+- **Delegation.** Claude Code auto-routes to the right subagent from its
+  `description`. In Copilot you either pick the agent yourself from the picker, or
+  select **`ds-orchestrator`** (above) to get the same automatic delegation.
 - **No separate context window per agent.** Claude subagents each run in an
   isolated context; Copilot agents share the chat session's context.
 - **`model` is not pinned.** The Claude version pins `sonnet` for reasoning-heavy
