@@ -12,6 +12,7 @@ delegate work to the right specialist.
 |---|---|---|
 | [CSharpWindowsFullStack](CSharpWindowsFullStack/) | C# / .NET 8 on Windows | Full-stack builds: console/CLI, WPF & WinForms, WinUI 3/MAUI, Worker/Windows Service, ASP.NET Core API, Blazor — plus data, security/auth, interop, testing, review, build/deploy |
 | [DataScience](DataScience/) | Python 3.11+ | End-to-end data science: ingestion, EDA, cleaning/validation, feature engineering, classical ML, deep learning (PyTorch), Transformer fine-tuning, time-series, RAG, evaluation, deployment & MLOps |
+| [DataScienceCopilot](DataScienceCopilot/) | Python 3.11+ | The DataScience suite ported to **GitHub Copilot** (custom agents under `.github/agents/`, prompt files, and `copilot-instructions.md`) — same 19 roles for VS Code Copilot or the Copilot cloud coding agent |
 
 ### CSharpWindowsFullStack agents (14)
 
@@ -69,8 +70,16 @@ ClaudeSubAgents/
 │   ├── .claude/agents/   # 12 C# / Windows subagents
 │   ├── CLAUDE.md         # stack, architecture & conventions
 │   └── README.md
-└── DataScience/
-    ├── .claude/agents/   # 9 data-science subagents
-    ├── CLAUDE.md         # stack, structure & conventions
+├── DataScience/
+│   ├── .claude/agents/   # 19 data-science subagents (Claude Code)
+│   ├── CLAUDE.md         # stack, structure & conventions
+│   └── README.md
+└── DataScienceCopilot/
+    ├── .github/agents/   # 19 data-science custom agents (GitHub Copilot)
+    ├── .github/prompts/  # /eda, /train-baseline, /full-pipeline
+    ├── .github/copilot-instructions.md
     └── README.md
 ```
+
+> Note: `DataScience/` and `CSharpWindowsFullStack/` target **Claude Code**;
+> `DataScienceCopilot/` is the same data-science suite in **GitHub Copilot** format.

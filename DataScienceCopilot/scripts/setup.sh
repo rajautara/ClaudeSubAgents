@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Environment setup: make the project runnable. Runs automatically via the
+# devcontainer postCreateCommand, or invoke manually: `bash scripts/setup.sh`.
+# Idempotent — safe to run repeatedly.
+set -euo pipefail
+
+echo "[setup] preparing data science workspace..."
+
+# 1. Ensure the standard project structure exists.
+mkdir -p data/{raw,interim,processed,clean} \
+         src models reports/figures notebooks tests deploy
+
+# 2. Install dependencies if a manifest is present. Prefer uv, fall back to pip.
+if command -v uv >/dev/null 2>&1; then
+  if [ -f pyproject.toml ]; then
+    uv sync 2>/dev/null || echo "[setup] uv sync skipped"
+  elif [ -f requirements.txt ]; then
+    uv pip install -r requirements.txt 2>/dev/null || echo "[setup] uv pip install skipped"
+  fi
+elif command -v pip >/dev/null 2>&1; then
+  [ -f requirements.txt ] && pip install -q -r requirements.txt 2>/dev/null || true
+fi
+
+# 3. Reproducibility: pin a default seed for any tooling that reads it.
+export PYTHONHASHSEED=42
+
+echo "[setup] ready. Reminder: data/ is git-ignored; raw data is immutable."
