@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/scripts/session_start.sh"
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/session_start.ps1"
           }
         ]
       }
