@@ -42,7 +42,7 @@
           {
             "type": "command",
             "command": "python",
-            "args": ["${CLAUDE_PROJECT_DIR}/.claude/scripts/protect_raw.py"]
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/scripts/path_guard.py"]
           }
         ]
       }
