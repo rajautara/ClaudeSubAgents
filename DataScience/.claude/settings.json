@@ -30,7 +30,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/scripts/session_start.sh || powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/session_start.ps1"
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/scripts/session_start.sh\" || powershell -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_PROJECT_DIR}/.claude/scripts/session_start.ps1\""
           }
         ]
       }
@@ -41,7 +41,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/scripts/protect_raw.py"
+            "command": "python",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/scripts/protect_raw.py"]
           }
         ]
       }

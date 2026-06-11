@@ -3,6 +3,9 @@
 # (local or on the web). Idempotent — safe to run on every session start.
 set -euo pipefail
 
+# Always operate on the project root, regardless of the session's cwd.
+cd "${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "$0")/../.." && pwd)}"
+
 echo "[session_start] preparing data science workspace..."
 
 # 1. Ensure the standard project structure exists.
