@@ -16,6 +16,51 @@ Or, to use the agents across every project, copy `.claude/agents/` to
 
 Then in Claude Code, run `/agents` to confirm they all loaded.
 
+## Project structure (prepare this before running the subagents)
+
+The subagents assume the layout below. The **SessionStart hook**
+(`.claude/scripts/session_start.{sh,ps1}`) creates these folders automatically on
+every fresh session, so normally you don't create them by hand — but this is where
+each kind of file belongs:
+
+```
+.
+├── data/                 # ALL datasets live here (git-ignored)
+│   ├── raw/              # ← put your source dataset here (immutable, never edit)
+│   ├── interim/          # intermediate transformed data
+│   ├── processed/        # final data ready for modeling
+│   └── clean/            # cleaned outputs from data-cleaner (+ held-out split)
+├── src/                  # reusable, importable, testable modules
+├── scripts/              # runnable scripts / pipelines (training, eval, one-off jobs)
+├── notebooks/            # exploration only — logic graduates to src/
+├── models/              # saved models, checkpoints, adapters
+├── reports/             # written reports & decisions (audit trail)
+│   └── figures/         # saved plots
+├── tests/               # pytest tests for graduated src/ modules
+├── deploy/              # serving artifacts (FastAPI/ONNX/Docker)
+├── CLAUDE.md            # global context all subagents read
+└── .claude/
+    ├── agents/          # the subagent definitions
+    ├── commands/        # /eda, /train-baseline, /full-pipeline
+    └── scripts/         # SessionStart hook
+```
+
+**Where do I put my dataset?** Drop your source files in **`data/raw/`** — this is
+the immutable input every pipeline reads from (e.g. `data/raw/sales.csv`). The
+subagents write derived data to `data/interim/`, `data/processed/`, and
+`data/clean/`; never edit `data/raw/` by hand.
+
+> If you are **not** using the SessionStart hook (e.g. you only copied the
+> `.claude/agents/`), create at least `data/raw/` yourself and put your dataset
+> there before invoking a subagent. The other folders are created on demand.
+
+Notes:
+- `data/` and large model artifacts should be **git-ignored**; commit code,
+  metadata, and pointers (DVC/MLflow), not the data blobs.
+- Generated code is never left only in the chat — subagents write it to a file:
+  reusable logic → `src/`, runnable pipelines → `scripts/`, exploration →
+  `notebooks/` (see Conventions in `CLAUDE.md`).
+
 ## Subagents & roles
 
 | Subagent | When to use | Focus |

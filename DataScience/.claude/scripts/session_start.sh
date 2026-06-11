@@ -7,7 +7,7 @@ echo "[session_start] preparing data science workspace..."
 
 # 1. Ensure the standard project structure exists.
 mkdir -p data/{raw,interim,processed,clean} \
-         src models reports/figures notebooks tests deploy
+         src scripts models reports/figures notebooks tests deploy
 
 # 2. Install dependencies if a manifest is present. Prefer uv, fall back to pip.
 if command -v uv >/dev/null 2>&1; then

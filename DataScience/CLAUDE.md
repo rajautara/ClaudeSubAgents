@@ -22,6 +22,7 @@ data/
   processed/   # final data ready for modeling
   clean/       # cleaned outputs from data-cleaner
 src/           # reusable modules (importable, testable)
+scripts/       # runnable scripts / pipelines (training, eval, one-off jobs)
 notebooks/     # exploration only — logic graduates to src/
 models/        # saved models, checkpoints, adapters
 reports/       # written reports
@@ -41,6 +42,12 @@ reports/       # written reports
 - Choose metrics appropriate to the problem (avoid plain accuracy on imbalanced data).
 - Use relative paths via pathlib; do not hardcode absolute paths.
 - Log experiments and decisions to `reports/` so there is an audit trail.
+- Code placement (ALL subagents): never leave generated code living only in the
+  chat response — always write it to a file in the repo so work is reproducible.
+  - Reusable / importable / testable logic -> `src/` (as a module).
+  - Exploration & throwaway analysis -> `notebooks/`; once stable, graduate it to `src/`.
+  - Runnable scripts & pipelines (training, evaluation, one-off jobs) -> `scripts/`.
+  - Tests for graduated `src/` modules -> `tests/` (owned by `code-tester`).
 
 ## Hardware
 - Use GPU automatically when available; fall back gracefully to CPU.

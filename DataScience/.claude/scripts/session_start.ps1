@@ -7,7 +7,7 @@ Write-Host "[session_start] preparing data science workspace..."
 # 1. Ensure the standard project structure exists.
 $dirs = @(
     'data/raw', 'data/interim', 'data/processed', 'data/clean',
-    'src', 'models', 'reports/figures', 'notebooks', 'tests', 'deploy'
+    'src', 'scripts', 'models', 'reports/figures', 'notebooks', 'tests', 'deploy'
 )
 foreach ($d in $dirs) {
     if (-not (Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force | Out-Null }
