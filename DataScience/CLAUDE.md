@@ -48,6 +48,14 @@ reports/       # written reports
   - Exploration & throwaway analysis -> `notebooks/`; once stable, graduate it to `src/`.
   - Runnable scripts & pipelines (training, evaluation, one-off jobs) -> `scripts/`.
   - Tests for graduated `src/` modules -> `tests/` (owned by `code-tester`).
+  - Temp / diagnostic scratch scripts (quick checks, debugging, one-off
+    verification) -> `scripts/tmp/` (git-ignored). DELETE them once the check
+    is done. For one-liners, prefer running inline (`python -c "..."`) instead
+    of creating a file at all.
+- The project ROOT stays clean (enforced by the path-guard hook): NEVER create
+  `.py` / `.ipynb` files at the root — no `_tmp_*.py`, `check_*.py`, fix
+  scripts, or scratch notebooks there. Only config & docs (CLAUDE.md, README,
+  pyproject.toml/requirements.txt, .gitignore) live at the root.
 
 ## Hardware
 - Use GPU automatically when available; fall back gracefully to CPU.
@@ -105,9 +113,11 @@ the contract between stages, not just an archive.
 - A SessionStart hook (`.claude/settings.json` -> `session_start.sh` on
   Linux/macOS, `session_start.ps1` on Windows) creates the folder structure and
   installs deps so a fresh session is ready to run.
-- Raw-data immutability is ENFORCED, not just stated: a PreToolUse hook
-  (`.claude/scripts/protect_raw.py`) plus permission deny rules block any
-  Write/Edit under `data/raw/`. Write derived data elsewhere.
+- Layout rules are ENFORCED, not just stated: a PreToolUse hook
+  (`.claude/scripts/path_guard.py`) plus permission deny rules block any
+  Write/Edit under `data/raw/` (immutable) AND any new `.py`/`.ipynb` file at
+  the project root (code belongs in src/, scripts/, tests/, notebooks/;
+  scratch in `scripts/tmp/`).
 - `PYTHONHASHSEED=42` is set session-wide via `env` in `.claude/settings.json`.
 - Common DS commands (python, pytest, uv, pip install, dvc, mlflow) are
   pre-allowed in `.claude/settings.json` to reduce permission prompts.

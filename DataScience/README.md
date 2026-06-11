@@ -11,8 +11,11 @@ Copy these into your project:
 - `.claude/settings.json` + `.claude/scripts/` -> hooks & permissions:
   - SessionStart hook (cross-platform: `.sh` on Linux/macOS, `.ps1` on Windows)
     that sets up the folder structure and installs deps
-  - PreToolUse hook (`protect_raw.py`) + permission deny rules that **block any
-    edit to `data/raw/`** — raw-data immutability is enforced, not just stated
+  - PreToolUse hook (`path_guard.py`) + permission deny rules that **block any
+    edit to `data/raw/`** (immutability) and **block creating `.py`/`.ipynb`
+    files in the project root** (code goes to `src/`/`scripts/`/`tests/`/
+    `notebooks/`; throwaway scratch to `scripts/tmp/`) — layout rules are
+    enforced, not just stated
   - a permission allowlist (python/pytest/uv/pip/dvc/mlflow) so long pipelines
     run with fewer permission prompts
 - `CLAUDE.md` -> your **project root** (global context all subagents read)
@@ -38,6 +41,7 @@ each kind of file belongs:
 │   └── clean/            # cleaned outputs from data-cleaner (+ held-out split)
 ├── src/                  # reusable, importable, testable modules
 ├── scripts/              # runnable scripts / pipelines (training, eval, one-off jobs)
+│   └── tmp/              # throwaway scratch/diagnostic scripts (git-ignored, delete after use)
 ├── notebooks/            # exploration only — logic graduates to src/
 ├── models/              # saved models, checkpoints, adapters
 ├── reports/             # written reports & decisions (audit trail)
@@ -48,7 +52,7 @@ each kind of file belongs:
 └── .claude/
     ├── agents/          # the subagent definitions
     ├── commands/        # /eda, /train-baseline, /full-pipeline, /evaluate, /compare-models, /report
-    └── scripts/         # SessionStart hook + protect_raw.py (raw-data guard)
+    └── scripts/         # SessionStart hook + path_guard.py (raw-data & root-layout guard)
 ```
 
 **Where do I put my dataset?** Drop your source files in **`data/raw/`** — this is
@@ -146,6 +150,6 @@ the audit trail doubles as the contract between stages.
 - `CLAUDE.md` holds global, project-wide context (stack, structure, conventions). Subagent `.md` files hold task-specific behavior. They complement each other.
 - Edit any `.md` to tweak behavior — change the `tools` field to limit access (e.g. remove `Bash` from a subagent that should not run code).
 - Each subagent pins a `model` in its frontmatter: heavier reasoning agents use `sonnet`; `viz-specialist` uses `haiku` to save cost. Change to `opus` or `inherit` as you prefer.
-- Raw-data immutability is enforced two ways in `.claude/settings.json`: permission `deny` rules for `Write/Edit(data/raw/**)` and a PreToolUse hook (`.claude/scripts/protect_raw.py`) that blocks the call with an explanation. Writes made inside Bash-run Python scripts can't be intercepted — that case is covered by the CLAUDE.md convention.
+- Layout rules are enforced two ways in `.claude/settings.json`: permission `deny` rules for `Write/Edit(data/raw/**)` and a PreToolUse hook (`.claude/scripts/path_guard.py`) that blocks writes under `data/raw/` AND new `.py`/`.ipynb` files at the project root, each with an explanation that redirects the agent to the right folder. Writes made inside Bash-run Python scripts can't be intercepted — that case is covered by the CLAUDE.md convention.
 - Add more subagents as your stack needs (e.g. `geospatial-specialist`, `causal-inference-specialist`, `llm-eval-specialist`).
 - After editing agent files mid-session, run `/agents` again (or start a fresh session) to reload.
