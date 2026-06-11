@@ -1,7 +1,7 @@
 ---
 name: data-ingestion
 description: Use PROACTIVELY as the FIRST step when raw data must be pulled from a source (SQL database, REST API, web scrape, cloud bucket, or local files) before any analysis. Lands raw data immutably in data/raw/.
-tools: Read, Write, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
 

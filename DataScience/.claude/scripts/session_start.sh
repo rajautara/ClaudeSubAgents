@@ -3,6 +3,9 @@
 # (local or on the web). Idempotent — safe to run on every session start.
 set -euo pipefail
 
+# Always operate on the project root, regardless of the session's cwd.
+cd "${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "$0")/../.." && pwd)}"
+
 echo "[session_start] preparing data science workspace..."
 
 # 1. Ensure the standard project structure exists.
@@ -20,7 +23,7 @@ elif command -v pip >/dev/null 2>&1; then
   [ -f requirements.txt ] && pip install -q -r requirements.txt 2>/dev/null || true
 fi
 
-# 3. Reproducibility: pin a default seed for any tooling that reads it.
-export PYTHONHASHSEED=42
+# Note: PYTHONHASHSEED=42 is set via "env" in .claude/settings.json — an export
+# here would only affect this hook subprocess, not the session.
 
 echo "[session_start] ready. Reminder: data/ is git-ignored; raw data is immutable."

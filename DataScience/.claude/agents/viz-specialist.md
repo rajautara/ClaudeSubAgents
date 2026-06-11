@@ -1,7 +1,7 @@
 ---
 name: viz-specialist
 description: Create visualizations & plots (matplotlib, seaborn, plotly). Use whenever you need to visualize data, distributions, relationships, or model results.
-tools: Read, Write, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash
 model: haiku
 ---
 

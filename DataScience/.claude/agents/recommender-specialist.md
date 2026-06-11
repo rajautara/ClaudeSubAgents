@@ -1,7 +1,7 @@
 ---
 name: recommender-specialist
 description: Specialist for recommender systems — collaborative filtering, content-based, and matrix factorization (implicit, LightFM, surprise). Use for personalization, ranking, and "users who liked X" tasks with explicit or implicit feedback. Optimizes ranking metrics, not plain accuracy.
-tools: Read, Write, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
 

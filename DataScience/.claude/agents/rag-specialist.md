@@ -1,7 +1,7 @@
 ---
 name: rag-specialist
 description: Specialist for Retrieval-Augmented Generation pipelines — document chunking, embeddings, vector stores (FAISS/Chroma), retrieval, and retrieval evaluation. Use to build or improve RAG / semantic search over a document corpus. Complements transformer-finetuner on the LLM-application side.
-tools: Read, Write, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
 

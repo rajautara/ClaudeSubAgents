@@ -2,6 +2,10 @@
 # Idempotent - safe to run on every session start. PowerShell port of session_start.sh.
 $ErrorActionPreference = 'Stop'
 
+# Always operate on the project root, regardless of the session's cwd.
+$projectRoot = if ($env:CLAUDE_PROJECT_DIR) { $env:CLAUDE_PROJECT_DIR } else { (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path }
+Set-Location $projectRoot
+
 Write-Host "[session_start] preparing data science workspace..."
 
 # 1. Ensure the standard project structure exists.
@@ -26,7 +30,7 @@ if (Get-Command uv -ErrorAction SilentlyContinue) {
     }
 }
 
-# 3. Reproducibility: pin a default seed for any tooling that reads it.
-$env:PYTHONHASHSEED = '42'
+# Note: PYTHONHASHSEED=42 is set via "env" in .claude/settings.json — setting it
+# here would only affect this hook subprocess, not the session.
 
 Write-Host "[session_start] ready. Reminder: data/ is git-ignored; raw data is immutable."
