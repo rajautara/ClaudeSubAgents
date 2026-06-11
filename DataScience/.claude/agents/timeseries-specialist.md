@@ -1,7 +1,7 @@
 ---
 name: timeseries-specialist
 description: Specialist for time-series analysis & forecasting (statsmodels ARIMA/SARIMA, Prophet, sktime). Use for temporal data — demand/sales forecasting, anomaly detection over time, lag/rolling features, and temporal cross-validation. Replaces the generic split logic in model-trainer for time-ordered data.
-tools: Read, Write, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
 

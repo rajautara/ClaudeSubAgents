@@ -55,6 +55,7 @@ reports/       # written reports
   or switch to QLoRA for large Transformer fine-tunes.
 
 ## Subagents (in .claude/agents/)
+- `problem-framer` — frame the business problem BEFORE any data work (charter)
 - `data-ingestion` — pull raw data from SQL/API/cloud/files into data/raw/ (step 0)
 - `data-explorer` — EDA & profiling
 - `data-cleaner` — cleaning & preprocessing (+ owns the held-out split)
@@ -66,23 +67,32 @@ reports/       # written reports
 - `transformer-finetuner` — fine-tune HuggingFace Transformers (LoRA/QLoRA)
 - `timeseries-specialist` — forecasting (ARIMA/Prophet/sktime), temporal CV
 - `rag-specialist` — RAG / semantic search (chunking, embeddings, vector DB)
-- `model-evaluator` — metrics, error analysis, SHAP, validation
+- `model-evaluator` — metrics, error analysis, SHAP, threshold tuning, model card
 - `model-deployer` — package model for serving (FastAPI/ONNX/Docker)
+- `model-monitor` — post-deployment monitoring: drift, decay, retraining triggers
 - `recommender-specialist` — recommender systems (CF, content-based, matrix factorization)
 - `anomaly-detector` — outlier/novelty detection (IsolationForest/LOF/OC-SVM/autoencoder)
+- `clustering-specialist` — unsupervised segmentation (KMeans/HDBSCAN/GMM, PCA/UMAP)
 - `viz-specialist` — plots (matplotlib/seaborn/plotly)
 - `notebook-engineer` — reproducibility & project structure
 - `code-tester` — pytest for graduated src/ modules
 - `mlops-orchestrator` — reproducible pipelines, tracking, registry, CI (DVC/MLflow)
 
 Typical flow:
-ingest -> explore -> clean (+ create held-out split) -> validate (schema)
--> engineer (build Pipeline) -> train (model-trainer | dl-trainer |
-transformer-finetuner | timeseries-specialist) -> evaluate -> deploy,
+frame (problem charter) -> ingest -> explore -> clean (+ create held-out split)
+-> validate (schema) -> engineer (build Pipeline) -> train (model-trainer |
+dl-trainer | transformer-finetuner | timeseries-specialist) -> evaluate
+(+ threshold + model card) -> deploy -> monitor (drift/decay/retraining),
 with viz-specialist called whenever a plot is needed, code-tester covering
 src/ modules, and notebook-engineer supporting structure & reproducibility.
 Use stats-analyst for inference/experiment questions, rag-specialist for
-retrieval-augmented LLM apps.
+retrieval-augmented LLM apps, clustering-specialist for unsupervised
+segmentation.
+
+Handoff convention: each agent reads the upstream reports it depends on
+(e.g. data-cleaner reads the EDA report; model-evaluator reads the problem
+charter for the success bar and cost of errors) — the `reports/` folder is
+the contract between stages, not just an archive.
 
 ## Experiment tracking & data versioning
 - Track experiments with MLflow or Weights & Biases when configured: log params,
@@ -91,7 +101,15 @@ retrieval-augmented LLM apps.
   known data snapshot + code commit. Record the data version with every model.
 - `.gitignore` `data/` and large artifacts; commit metadata/pointers, not blobs.
 
-## Automation
-- A SessionStart hook (`.claude/settings.json` -> `.claude/scripts/session_start.sh`)
-  creates the folder structure and installs deps so a fresh session is ready to run.
-- Slash commands in `.claude/commands/`: `/eda`, `/train-baseline`, `/full-pipeline`.
+## Automation & enforcement
+- A SessionStart hook (`.claude/settings.json` -> `session_start.sh` on
+  Linux/macOS, `session_start.ps1` on Windows) creates the folder structure and
+  installs deps so a fresh session is ready to run.
+- Raw-data immutability is ENFORCED, not just stated: a PreToolUse hook
+  (`.claude/scripts/protect_raw.py`) plus permission deny rules block any
+  Write/Edit under `data/raw/`. Write derived data elsewhere.
+- `PYTHONHASHSEED=42` is set session-wide via `env` in `.claude/settings.json`.
+- Common DS commands (python, pytest, uv, pip install, dvc, mlflow) are
+  pre-allowed in `.claude/settings.json` to reduce permission prompts.
+- Slash commands in `.claude/commands/`: `/eda`, `/train-baseline`,
+  `/full-pipeline`, `/evaluate`, `/compare-models`, `/report`.

@@ -1,11 +1,47 @@
 {
+  "env": {
+    "PYTHONHASHSEED": "42"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(uv:*)",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(pytest:*)",
+      "Bash(jupyter nbconvert:*)",
+      "Bash(dvc:*)",
+      "Bash(mlflow:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)"
+    ],
+    "deny": [
+      "Write(data/raw/**)",
+      "Edit(data/raw/**)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/credentials*)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/session_start.ps1"
+            "command": "bash .claude/scripts/session_start.sh || powershell -NoProfile -ExecutionPolicy Bypass -File .claude/scripts/session_start.ps1"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/scripts/protect_raw.py"
           }
         ]
       }

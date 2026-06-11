@@ -1,7 +1,7 @@
 ---
 name: stats-analyst
 description: Specialist for classical statistical analysis (NOT machine learning) — hypothesis testing, A/B test design & analysis, power/sample-size, confidence intervals, and basic causal inference. Use for "is this difference real?" questions, experiment design, and inference rather than prediction.
-tools: Read, Write, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
 

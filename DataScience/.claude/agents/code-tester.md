@@ -1,7 +1,7 @@
 ---
 name: code-tester
 description: Specialist for writing tests (pytest) for the reusable modules under src/. Use after notebook-engineer graduates logic from notebooks into src/ — importable code must be tested. Covers unit tests, fixtures, determinism/seed checks, and edge cases.
-tools: Read, Write, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
 
