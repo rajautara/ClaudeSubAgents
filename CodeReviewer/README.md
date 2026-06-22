@@ -1,44 +1,44 @@
 # Project Review — Claude Code Setup
 
-Tiga cara cetus review yang sama, dikongsi otak (`project-reviewer` subagent).
+Three ways to trigger the same review, all sharing one brain (the `project-reviewer` subagent).
 
-## Struktur
+## Structure
 ```
 .claude/
 ├── agents/
-│   └── project-reviewer.md      # OTAK: isolated context, read-only, model: opus
+│   └── project-reviewer.md      # THE BRAIN: isolated context, read-only, model: opus
 ├── commands/
 │   └── review-project.md        # Trigger: /review-project [focus]
 └── skills/
     └── project-review/
-        ├── SKILL.md             # Trigger auto-invocable; delegate ke subagent
-        └── reference.md         # Protokol penuh (fallback bila subagent tiada)
+        ├── SKILL.md             # Auto-invocable trigger; delegates to the subagent
+        └── reference.md         # Full protocol (fallback when the subagent is absent)
 ```
 
-## Pemasangan
-Salin folder `.claude/` ke **root projek** (project scope, boleh commit ke git untuk dikongsi pasukan):
+## Installation
+Copy the `.claude/` folder to your **project root** (project scope — commit it to git to share with your team):
 ```
-cp -r .claude /path/ke/projek-anda/
+cp -r .claude /path/to/your-project/
 ```
-Atau letak di `~/.claude/` (user scope) untuk guna di **semua** projek.
-Lepas salin, **restart sesi Claude Code** supaya fail dibaca (agent/skill yang ditambah terus ke disk perlu restart).
+Or place it in `~/.claude/` (user scope) to use it across **all** projects.
+After copying, **restart your Claude Code session** so the files are loaded (agents/skills added directly to disk require a restart).
 
-## Bila guna yang mana
+## When to use which
 
-| Format | Cara cetus | Bila guna |
+| Format | How it triggers | When to use |
 |---|---|---|
-| **Command** `/review-project` | Taip eksplisit | Bila awak nak review sekarang, dengan kawalan penuh. Boleh beri fokus: `/review-project src/api` atau `/review-project security only` |
-| **Skill** `project-review` | Auto bila Claude kesan niat ("review my project", "is this well built") | Bila awak nak Claude sendiri tahu bila nak guna, tanpa ingat nama command |
-| **Agent** `project-reviewer` | Dipanggil oleh command/skill, atau eksplisit: "use the project-reviewer subagent" | Otak sebenar — jangan padam. Isolated context jaga main session bersih |
+| **Command** `/review-project` | Typed explicitly | When you want a review right now, with full control. Pass a focus: `/review-project src/api` or `/review-project security only` |
+| **Skill** `project-review` | Auto, when Claude detects the intent ("review my project", "is this well built") | When you want Claude to decide when to use it, without remembering a command name |
+| **Agent** `project-reviewer` | Called by the command/skill, or explicitly: "use the project-reviewer subagent" | The actual brain — don't delete it. Isolated context keeps the main session clean |
 
-## Kenapa subagent + trigger nipis?
-- Review baca banyak fail → kalau jalan dalam main session, context awak penuh dengan output mentah dan kualiti jawapan merosot.
-- Subagent jalan dalam context window sendiri, baca semua, dan pulangkan **hanya laporan akhir** ke sesi utama.
-- `tools: Read, Grep, Glob, Bash` sahaja (tiada Write/Edit) = audit read-only sebenar.
-- `model: opus` sebab review strategik perlu reasoning dalam. Tukar ke `sonnet` kalau nak jimat/laju.
+## Why a subagent + thin triggers?
+- A review reads many files → if it runs in the main session, your context fills with raw output and answer quality degrades.
+- The subagent runs in its own context window, reads everything, and returns **only the final report** to the main session.
+- `tools: Read, Grep, Glob, Bash` only (no Write/Edit) = a genuine read-only audit at the tooling level.
+- `model: opus` because strategic review needs deep reasoning. Switch to `sonnet` for cheaper/faster runs.
 
 ## Tips
-- **Repeat review:** lampirkan laporan lama, tambah: "Compare against the previous review — what improved, regressed, or remains open?"
-- **Multi-agent cross-check:** jalankan pada Opus dan Sonnet, banding. Finding yang muncul pada kedua-dua biasanya paling sahih.
-- **Projek trading/EA awak:** seksyen security sudah ada checklist idempotency + replay protection untuk order execution — kekalkan.
-- **100% tanpa soalan:** dalam `project-reviewer.md`, tukar baris Phase 0.6 kepada "Never ask questions; proceed with best inference and mark all assumptions."
+- **Repeat review:** attach the previous report and add: "Compare against the previous review — what improved, regressed, or remains open?"
+- **Multi-agent cross-check:** run it on Opus and Sonnet, then compare. Findings that appear in both are usually the most reliable.
+- **For your trading/EA projects:** the security section already includes an idempotency + replay-protection checklist for order execution — keep it.
+- **100% no-questions mode:** in `project-reviewer.md`, change the Phase 0.6 line to "Never ask questions; proceed with best inference and mark all assumptions."
