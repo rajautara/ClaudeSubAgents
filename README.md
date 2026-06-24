@@ -11,8 +11,10 @@ delegate work to the right specialist.
 | Suite | Stack | What it covers |
 |---|---|---|
 | [CSharpWindowsFullStack](CSharpWindowsFullStack/) | C# / .NET 8 on Windows | Full-stack builds: console/CLI, WPF & WinForms, WinUI 3/MAUI, Worker/Windows Service, ASP.NET Core API, Blazor — plus data, security/auth, interop, testing, review, build/deploy |
-| [DataScience](DataScience/) | Python 3.11+ | End-to-end data science: ingestion, EDA, cleaning/validation, feature engineering, classical ML, deep learning (PyTorch), Transformer fine-tuning, time-series, RAG, evaluation, deployment & MLOps |
-| [DataScienceCopilot](DataScienceCopilot/) | Python 3.11+ | The DataScience suite ported to **GitHub Copilot** (custom agents under `.github/agents/`, prompt files, and `copilot-instructions.md`) — same 19 roles for VS Code Copilot or the Copilot cloud coding agent |
+| [DataScience](DataScience/) | Python 3.11+ | End-to-end data science: problem framing, ingestion, EDA, cleaning/validation, feature engineering, classical ML, clustering, deep learning (PyTorch), Transformer fine-tuning, time-series, RAG, evaluation, deployment, monitoring & MLOps |
+| [DataScienceCopilot](DataScienceCopilot/) | Python 3.11+ | The DataScience suite ported to **GitHub Copilot** (custom agents under `.github/agents/`, prompt files, and `copilot-instructions.md`) — for VS Code Copilot or the Copilot cloud coding agent |
+| [CodeReviewer](CodeReviewer/) | Language-agnostic | A read-only project-review subagent plus thin triggers (command `/review-project`, auto-invoked skill, and the agent itself) for autonomous architecture/security/maintainability audits |
+| [KnowledgeBase](KnowledgeBase/) | Markdown + Python | An internal knowledge-base system: a lookup agent over a `knowledge-base/` of domain docs, plus a report-extractor that converts PDF/Word/Excel/scans into clean Markdown |
 
 ### CSharpWindowsFullStack agents (14)
 
@@ -22,14 +24,36 @@ delegate work to the right specialist.
 `blazor-engineer` · `test-engineer` · `integration-test-engineer` ·
 `build-deploy-engineer` · `code-reviewer`
 
-### DataScience agents (19)
+### DataScience agents (22)
 
+`problem-framer` · `data-ingestion` · `data-explorer` · `data-cleaner` ·
+`data-validator` · `feature-engineer` · `stats-analyst` · `model-trainer` ·
+`clustering-specialist` · `dl-trainer` · `transformer-finetuner` ·
+`timeseries-specialist` · `rag-specialist` · `recommender-specialist` ·
+`anomaly-detector` · `model-evaluator` · `model-deployer` · `model-monitor` ·
+`viz-specialist` · `notebook-engineer` · `code-tester` · `mlops-orchestrator`
+
+### DataScienceCopilot agents (20)
+
+The DataScience roles in GitHub Copilot format, led by a `ds-orchestrator`:
 `data-ingestion` · `data-explorer` · `data-cleaner` · `data-validator` ·
 `feature-engineer` · `stats-analyst` · `model-trainer` · `dl-trainer` ·
 `transformer-finetuner` · `timeseries-specialist` · `rag-specialist` ·
-`model-evaluator` · `model-deployer` · `viz-specialist` · `notebook-engineer` ·
-`code-tester` · `recommender-specialist` · `anomaly-detector` ·
+`recommender-specialist` · `anomaly-detector` · `model-evaluator` ·
+`model-deployer` · `viz-specialist` · `notebook-engineer` · `code-tester` ·
 `mlops-orchestrator`
+
+### CodeReviewer agents (1)
+
+`project-reviewer` — isolated context, read-only (`Read`/`Grep`/`Glob`/`Bash`),
+`model: opus`. Triggered by the `/review-project` command, the auto-invoked
+`project-review` skill, or by name.
+
+### KnowledgeBase agents (2)
+
+`kb-expert` (answers from the `knowledge-base/` index-first) ·
+`report-extractor` (PDF/Word/Excel/scans → one Markdown file per report).
+Commands `/kb` and `/extract`; skills `kb-lookup` and `report-extract`.
 
 See each suite's README for the full role table, typical workflow, and usage
 examples.
@@ -38,14 +62,19 @@ examples.
 
 Pick the suite that matches your project and copy its files in:
 
-- `<suite>/.claude/agents/` → your **project root** `.claude/agents/`
-  (commit to git to share with your team)
-- `<suite>/CLAUDE.md` → your **project root** (global context every subagent reads)
+- `<suite>/.claude/` → your **project root** `.claude/` (agents, commands,
+  skills, scripts and settings — commit to git to share with your team)
+- `<suite>/CLAUDE.md` → your **project root** (global context every subagent
+  reads), where the suite ships one
 
-To make the agents available across **all** your projects, copy the
+To make a suite's agents available across **all** your projects, copy its
 `.claude/agents/` folder to `~/.claude/agents/` (your home directory) instead.
 
-Then run `/agents` in Claude Code to confirm they loaded.
+After copying files directly to disk, **restart your Claude Code session** so
+they load, then run `/agents` to confirm.
+
+> `DataScienceCopilot/` targets **GitHub Copilot** instead — copy its `.github/`
+> folder (agents, prompts, `copilot-instructions.md`) to your project root.
 
 ## How it works
 
@@ -67,19 +96,33 @@ the main conversation. `CLAUDE.md` defines project-wide rules; the per-agent
 ```
 ClaudeSubAgents/
 ├── CSharpWindowsFullStack/
-│   ├── .claude/agents/   # 12 C# / Windows subagents
-│   ├── CLAUDE.md         # stack, architecture & conventions
+│   ├── .claude/agents/     # 14 C# / Windows subagents
+│   ├── .claude/commands/   # /scaffold-solution, /add-feature, /test-all
+│   ├── CLAUDE.md           # stack, architecture & conventions
 │   └── README.md
 ├── DataScience/
-│   ├── .claude/agents/   # 19 data-science subagents (Claude Code)
-│   ├── CLAUDE.md         # stack, structure & conventions
+│   ├── .claude/agents/     # 22 data-science subagents (Claude Code)
+│   ├── .claude/commands/   # /eda, /train-baseline, /full-pipeline, …
+│   ├── CLAUDE.md           # stack, structure & conventions
 │   └── README.md
-└── DataScienceCopilot/
-    ├── .github/agents/   # 19 data-science custom agents (GitHub Copilot)
-    ├── .github/prompts/  # /eda, /train-baseline, /full-pipeline
-    ├── .github/copilot-instructions.md
-    └── README.md
+├── DataScienceCopilot/
+│   ├── .github/agents/     # 20 data-science custom agents (GitHub Copilot)
+│   ├── .github/prompts/    # /eda, /train-baseline, /full-pipeline
+│   ├── .github/copilot-instructions.md
+│   └── README.md
+├── CodeReviewer/
+│   ├── .claude/agents/     # project-reviewer (the brain)
+│   ├── .claude/commands/   # /review-project
+│   ├── .claude/skills/     # project-review (auto-invoked)
+│   └── README.md
+└── KnowledgeBase/
+    ├── .claude/agents/     # kb-expert, report-extractor
+    ├── .claude/commands/   # /kb, /extract
+    ├── .claude/skills/     # kb-lookup, report-extract
+    ├── .claude/scripts/    # extract / rebuild-index / validate helpers
+    └── knowledge-base/     # the indexed domain docs
 ```
 
-> Note: `DataScience/` and `CSharpWindowsFullStack/` target **Claude Code**;
-> `DataScienceCopilot/` is the same data-science suite in **GitHub Copilot** format.
+> Note: `CSharpWindowsFullStack/`, `DataScience/`, `CodeReviewer/` and
+> `KnowledgeBase/` target **Claude Code**; `DataScienceCopilot/` is the
+> data-science suite in **GitHub Copilot** format.

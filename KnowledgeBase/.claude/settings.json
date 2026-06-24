@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(./knowledge-base/**)",
+      "Grep",
+      "Glob"
+    ],
+    "deny": [
+      "Write(./knowledge-base/**)",
+      "Edit(./knowledge-base/**)",
+      "Bash(rm:*)",
+      "Bash(mv:*)"
+    ]
+  }
+}
