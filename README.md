@@ -15,6 +15,7 @@ delegate work to the right specialist.
 | [DataScienceCopilot](DataScienceCopilot/) | Python 3.11+ | The DataScience suite ported to **GitHub Copilot** (custom agents under `.github/agents/`, prompt files, and `copilot-instructions.md`) — for VS Code Copilot or the Copilot cloud coding agent |
 | [CodeReviewer](CodeReviewer/) | Language-agnostic | A read-only project-review subagent plus thin triggers (command `/review-project`, auto-invoked skill, and the agent itself) for autonomous architecture/security/maintainability audits |
 | [KnowledgeBase](KnowledgeBase/) | Markdown + Python | An internal knowledge-base system: a lookup agent over a `knowledge-base/` of domain docs, plus a report-extractor that converts PDF/Word/Excel/scans into clean Markdown |
+| [Grammarly](Grammarly/) | Language-agnostic | A writing-assistant toolkit: five commands/skills for fix-grammar, formalize, summarize, translate (Japanese ⇄ English, auto-detect), and expand — no agents, runs inline in the conversation |
 
 ### CSharpWindowsFullStack agents (14)
 
@@ -54,6 +55,13 @@ The DataScience roles in GitHub Copilot format, led by a `ds-orchestrator`:
 `kb-expert` (answers from the `knowledge-base/` index-first) ·
 `report-extractor` (PDF/Word/Excel/scans → one Markdown file per report).
 Commands `/kb` and `/extract`; skills `kb-lookup` and `report-extract`.
+
+### Grammarly (no agents — 5 commands/skills)
+
+`/fix-grammar` · `/formalize` · `/summarize` · `/translate` · `/expand`, each
+paired with an auto-invoked skill of the same purpose (`fix-grammar` ·
+`formalize` · `summarize` · `translate-ja-en` · `expand`). Lightweight text
+transforms that run inline, no isolated-context subagent needed.
 
 See each suite's README for the full role table, typical workflow, and usage
 examples.
@@ -115,14 +123,18 @@ ClaudeSubAgents/
 │   ├── .claude/commands/   # /review-project
 │   ├── .claude/skills/     # project-review (auto-invoked)
 │   └── README.md
-└── KnowledgeBase/
-    ├── .claude/agents/     # kb-expert, report-extractor
-    ├── .claude/commands/   # /kb, /extract
-    ├── .claude/skills/     # kb-lookup, report-extract
-    ├── .claude/scripts/    # extract / rebuild-index / validate helpers
-    └── knowledge-base/     # the indexed domain docs
+├── KnowledgeBase/
+│   ├── .claude/agents/     # kb-expert, report-extractor
+│   ├── .claude/commands/   # /kb, /extract
+│   ├── .claude/skills/     # kb-lookup, report-extract
+│   ├── .claude/scripts/    # extract / rebuild-index / validate helpers
+│   └── knowledge-base/     # the indexed domain docs
+└── Grammarly/
+    ├── .claude/commands/   # /fix-grammar, /formalize, /summarize, /translate, /expand
+    ├── .claude/skills/     # fix-grammar, formalize, summarize, translate-ja-en, expand
+    └── README.md
 ```
 
-> Note: `CSharpWindowsFullStack/`, `DataScience/`, `CodeReviewer/` and
-> `KnowledgeBase/` target **Claude Code**; `DataScienceCopilot/` is the
-> data-science suite in **GitHub Copilot** format.
+> Note: `CSharpWindowsFullStack/`, `DataScience/`, `CodeReviewer/`,
+> `KnowledgeBase/` and `Grammarly/` target **Claude Code**;
+> `DataScienceCopilot/` is the data-science suite in **GitHub Copilot** format.
